@@ -70,7 +70,7 @@ After installation, access the Grafana dashboard:
 
 ```bash
 # Port-forward to Grafana service
-kubectl port-forward -n gpu-assessment-tool svc/gpu-assessment-tool-grafana 3000
+kubectl port-forward -n gpu-assessment-tool svc/gpu-assessment-tool-grafana 3000:80
 ```
 
 Open your browser and navigate to: `http://localhost:3000`
