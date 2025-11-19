@@ -70,7 +70,7 @@ After installation, access the Grafana dashboard:
 
 ```bash
 # Port-forward to Grafana service
-kubectl port-forward -n monitoring svc/gpu-assessment-tool-grafana 3000:80
+kubectl port-forward -n gpu-assessment-tool svc/gpu-assessment-tool-grafana 3000
 ```
 
 Open your browser and navigate to: `http://localhost:3000`
@@ -81,16 +81,6 @@ In case you want to edit the dashboards, login with the following credentials:
 - Username: `admin`
 - Password: `admin`
 
-### Step 4: Verify Prometheus Connection
-
-Check that Prometheus is scraping DCGM metrics:
-
-```bash
-# Port-forward to Prometheus
-kubectl port-forward -n monitoring svc/gpu-assessment-tool-prometheus-server 9090:80
-```
-
-Navigate to `http://localhost:9090` and query for `DCGM_FI_DEV_FB_FREE` to verify metrics are being collected.
 
 ## Configuration
 
