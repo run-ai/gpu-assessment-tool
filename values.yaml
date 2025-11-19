@@ -1,0 +1,74 @@
+
+global:
+  prometheusUrl: ""
+
+prometheus:
+  enabled: true
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2048Mi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    
+  alertmanager:
+    enabled: false
+  prometheus-node-exporter:
+    enabled: false
+  prometheus-pushgateway:
+    enabled: false
+  kube-state-metrics:
+    enabled: false
+
+grafana:
+  enabled: true
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2048Mi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  
+  adminUser: admin
+  adminPassword: admin
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          # URL will be set based on global.prometheusUrl or internal prometheus
+          url: '{{ if .Values.global.prometheusUrl }}{{ .Values.global.prometheusUrl }}{{ else }}http://{{ .Release.Name }}-prometheus-server{{ end }}'
+          access: proxy
+          isDefault: true
+            
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: 'default'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+            
+  dashboardsConfigMaps:
+    default: "grafana-dashboards"
+
+  grafana.ini:
+    dashboards:
+      default_home_dashboard_path: /var/lib/grafana/dashboards/default/gpu-assessment-dashboard.json
+    auth.anonymous:
+      enabled: true
+      org_name: Main Org.
+      org_role: Viewer
+      hide_version: true

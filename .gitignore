@@ -1,0 +1,16 @@
+# Helm chart dependencies
+charts/*.tgz
+
+# Helm lock file
+Chart.lock
+
+# Packaged Helm charts
+*.tgz
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store

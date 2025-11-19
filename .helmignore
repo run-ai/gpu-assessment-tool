@@ -1,0 +1,6 @@
+# Ignore the .helmignore file itself
+.helmignore
+
+# Ignore Git-related files and directories
+.git/
+.gitignore

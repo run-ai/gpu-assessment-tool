@@ -1,0 +1,19 @@
+apiVersion: v2
+name: gpu-assessment-tool
+description: A Helm chart for GPU assessment tool with monitoring stack
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+maintainers:
+  - name: NVIDIA
+    email: vkoukouliev@nvidia.com
+
+dependencies:
+  - name: prometheus
+    version: "27.45.0"
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: prometheus.enabled
+  - name: grafana
+    version: "10.1.4"
+    repository: https://grafana.github.io/helm-charts
+    condition: grafana.enabled
