@@ -1,5 +1,7 @@
 # GPU Assessment Tool
 
+![alt text](https://github.com/run-ai/gpu-assessment-tool/blob/master/dashboards/gpu-assessment-dashboard.png?raw=true)
+
 A comprehensive Helm chart for monitoring GPU resources in Kubernetes clusters. This tool provides real-time visibility into GPU allocation, utilization, memory usage, and pod status through an integrated Prometheus and Grafana monitoring stack.
 
 ## Overview
