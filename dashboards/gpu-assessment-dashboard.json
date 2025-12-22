@@ -18,6 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -123,7 +124,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Allocated GPUs"
+              "options": "Used Allocated GPUs"
             },
             "properties": [
               {
@@ -132,6 +133,43 @@
                   "fixedColor": "green",
                   "mode": "fixed"
                 }
+              },
+              {
+                "id": "custom.stacking",
+                "value": {
+                  "group": "A",
+                  "mode": "normal"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 30
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Idle Allocated GPUs"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.stacking",
+                "value": {
+                  "group": "A",
+                  "mode": "normal"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 30
               }
             ]
           }
@@ -176,12 +214,24 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum(group(kube_pod_info) by(pod, namespace, node) * on(node) group_left(modelName) (group(DCGM_FI_DEV_FB_FREE{node!=\"\", modelName=~\"$gpu_type\"}) by(node, modelName) or group(label_replace(DCGM_FI_DEV_FB_FREE{modelName=~\"$gpu_type\"}, \"pod_ip\", \"$1\", \"instance\", \"(.*):(.*)\") * on (pod_ip) group_left(node) kube_pod_info{created_by_name=~\".*dcgm-exporter\", pod_ip!=\"\"}) by(node, modelName)) * on(pod, namespace) group_left() group(kube_pod_status_phase{phase=\"Running\"}==1) by(pod, namespace) * on(pod, namespace) group_left() sum(max(kube_pod_container_resource_requests{resource=\"nvidia_com_gpu\"}) by(container, pod, namespace)) by(pod, namespace)) or count(DCGM_FI_DEV_FB_FREE)*0",
+          "expr": "count(group(group(kube_pod_info) by(pod, namespace, node) * on(node) group_left(modelName) (group(DCGM_FI_DEV_FB_FREE{node!=\"\", modelName=~\"$gpu_type\"}) by(node, modelName) or group(label_replace(DCGM_FI_DEV_FB_FREE{modelName=~\"$gpu_type\"}, \"pod_ip\", \"$1\", \"instance\", \"(.*):(.*)\") * on (pod_ip) group_left(node) kube_pod_info{created_by_name=~\".*dcgm-exporter\", pod_ip!=\"\"}) by(node, modelName)) * on(pod, namespace) group_left() group(kube_pod_status_phase{phase=\"Running\"}==1) by(pod, namespace) * on(pod, namespace) group_left() sum(max(kube_pod_container_resource_requests{resource=\"nvidia_com_gpu\"}) by(container, pod, namespace)) by(pod, namespace)) by(pod, namespace) * on(pod, namespace) group_right() (label_replace(label_replace(DCGM_FI_DEV_GPU_UTIL{modelName=~\"$gpu_type\", exported_pod!=\"\", exported_namespace!=\"\"}>0, \"pod\", \"$1\", \"exported_pod\", \"(.*)\"), \"namespace\", \"$1\", \"exported_namespace\", \"(.*)\") or DCGM_FI_DEV_GPU_UTIL{modelName=~\"$gpu_type\"}>0)) or count(DCGM_FI_DEV_FB_FREE)*0",
           "hide": false,
           "instant": false,
-          "legendFormat": "Allocated GPUs",
+          "legendFormat": "Used Allocated GPUs",
           "range": true,
           "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "expr": "count(group(group(kube_pod_info) by(pod, namespace, node) * on(node) group_left(modelName) (group(DCGM_FI_DEV_FB_FREE{node!=\"\", modelName=~\"$gpu_type\"}) by(node, modelName) or group(label_replace(DCGM_FI_DEV_FB_FREE{modelName=~\"$gpu_type\"}, \"pod_ip\", \"$1\", \"instance\", \"(.*):(.*)\") * on (pod_ip) group_left(node) kube_pod_info{created_by_name=~\".*dcgm-exporter\", pod_ip!=\"\"}) by(node, modelName)) * on(pod, namespace) group_left() group(kube_pod_status_phase{phase=\"Running\"}==1) by(pod, namespace) * on(pod, namespace) group_left() sum(max(kube_pod_container_resource_requests{resource=\"nvidia_com_gpu\"}) by(container, pod, namespace)) by(pod, namespace)) by(pod, namespace) * on(pod, namespace) group_right() (label_replace(label_replace(DCGM_FI_DEV_GPU_UTIL{modelName=~\"$gpu_type\", exported_pod!=\"\", exported_namespace!=\"\"}==0, \"pod\", \"$1\", \"exported_pod\", \"(.*)\"), \"namespace\", \"$1\", \"exported_namespace\", \"(.*)\") or DCGM_FI_DEV_GPU_UTIL{modelName=~\"$gpu_type\"}==0)) or count(DCGM_FI_DEV_FB_FREE)*0",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Idle Allocated GPUs",
+          "range": true,
+          "refId": "C"
         }
       ],
       "title": "",
@@ -894,12 +944,135 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "displayName",
+                "value": "Utilization"
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "namespace"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Namespace"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "node"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Node"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "pod"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Pod"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "id": 16,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "exemplar": false,
+          "expr": "bottomk(10, avg(group(group(kube_pod_info) by(pod, namespace, node) * on(node) group_left(modelName) (group(DCGM_FI_DEV_FB_FREE{node!=\"\", modelName=~\"$gpu_type\"}) by(node, modelName) or group(label_replace(DCGM_FI_DEV_FB_FREE{modelName=~\"$gpu_type\"}, \"pod_ip\", \"$1\", \"instance\", \"(.*):(.*)\") * on (pod_ip) group_left(node) kube_pod_info{created_by_name=~\".*dcgm-exporter\", pod_ip!=\"\"}) by(node, modelName)) * on(pod, namespace) group_left() group(kube_pod_status_phase{phase=\"Running\"}==1) by(pod, namespace) * on(pod, namespace) group_left() sum(max(kube_pod_container_resource_requests{resource=\"nvidia_com_gpu\"}) by(container, pod, namespace)) by(pod, namespace)) by(pod, namespace, node) * on(pod, namespace) group_right(node) (label_replace(label_replace(DCGM_FI_DEV_GPU_UTIL{modelName=~\"$gpu_type\", exported_pod!=\"\", exported_namespace!=\"\"}, \"pod\", \"$1\", \"exported_pod\", \"(.*)\"), \"namespace\", \"$1\", \"exported_namespace\", \"(.*)\") or DCGM_FI_DEV_GPU_UTIL{modelName=~\"$gpu_type\"})) by(pod, namespace, node))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Top 10 Inefficient Pods",
+      "type": "table"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 36
+        "y": 48
       },
       "id": 11,
       "panels": [],
@@ -975,7 +1148,7 @@
         "h": 8,
         "w": 20,
         "x": 0,
-        "y": 37
+        "y": 49
       },
       "id": 4,
       "options": {
@@ -1039,7 +1212,7 @@
         "h": 8,
         "w": 4,
         "x": 20,
-        "y": 37
+        "y": 49
       },
       "id": 6,
       "options": {
