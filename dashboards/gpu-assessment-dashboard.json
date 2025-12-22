@@ -1064,6 +1064,25 @@
         }
       ],
       "title": "Top 10 Inefficient Pods",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "Value": 4,
+              "namespace": 2,
+              "node": 3,
+              "pod": 1
+            },
+            "renameByName": {}
+          }
+        }
+      ],
       "type": "table"
     },
     {
