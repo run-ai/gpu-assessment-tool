@@ -1300,7 +1300,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "GPU Assessment",
-  "uid": "adh9vhj",
+  "title": "GPU Assessment (Edge Cases Support)",
+  "uid": "gpu-assessment-edge-cases-support",
   "version": 1
 }
