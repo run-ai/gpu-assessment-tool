@@ -8,3 +8,5 @@ metadata:
 data:
   gpu-assessment-dashboard.json: |
 {{ .Files.Get "dashboards/gpu-assessment-dashboard.json" | indent 4 }}
+  gpu-assessment-dashboard-lite.json: |
+{{ .Files.Get "dashboards/gpu-assessment-dashboard-lite.json" | indent 4 }}
