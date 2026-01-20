@@ -210,23 +210,6 @@ kubectl delete namespace gpu-assessment-tool
 2. Verify the Prometheus URL is correct
 3. Confirm DCGM metrics are available: `DCGM_FI_DEV_FB_FREE`, `DCGM_FI_DEV_GPU_UTIL`
 
-### Incorrect or unexpected data on the dashboard
-
-If you're seeing incorrect, incomplete, or unexpected data on the default **GPU Assessment** dashboard, try switching to the **GPU Assessment (Edge Cases Support)** dashboard.
-
-This alternative dashboard includes more complex queries designed to handle edge cases and non-standard setups, including:
-- **Run:ai Prometheus** configurations
-- **Fake GPU Operator** deployments (for testing/development)
-- Other custom or non-standard GPU monitoring setups
-
-**Note:** Due to the increased query complexity, this dashboard may result in slower load times.
-
-To switch dashboards:
-1. Open the side menu in Grafana
-2. Navigate to **Dashboards**
-3. Open the **default** folder
-4. Select **GPU Assessment (Edge Cases Support)**
-
 ### Pods failing to start
 
 Check resource availability:
