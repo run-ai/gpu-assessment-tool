@@ -2,6 +2,34 @@
 
 ![alt text](https://github.com/run-ai/gpu-assessment-tool/blob/master/dashboards/gpu-assessment-dashboard.png?raw=true)
 
+> **⚠️ CRITICAL PREREQUISITES**
+>
+> Before installing this chart, **you MUST have**:
+> 1. **NVIDIA GPU Operator with DCGM exporter** deployed in your cluster - **without this, GPU metrics will not be available**
+> 2. **Either** use the built-in Prometheus/Grafana stack **OR** have an external Prometheus server running - the chart creates only dashboards (ConfigMaps), **not monitoring agents**
+> 3. **Sufficient resources** for Prometheus and Grafana pods (1-2 CPU cores, 2-4 GB RAM recommended) - this will impact your monitoring system's performance
+> 4. **Understanding that this chart creates only dashboard ConfigMaps** - it does not deploy additional monitoring agents or exporters beyond the included Prometheus and Grafana
+>
+> > **📋 RESOURCE IMPACT WARNING**
+> >
+> > This chart spins up **two monitoring pods** (Prometheus and Grafana) which will:
+> > - Consume CPU and memory resources in your cluster
+> > - Add network I/O traffic as they scrape metrics
+> > - Generate additional workload on your monitoring infrastructure
+> > - Potentially slow down dashboard operations if cluster resources are limited
+>
+> > **🛠️ DEPLOYMENT LIMITATIONS**
+> >
+> > The chart **ONLY** creates:
+> > - ✅ Dashboard ConfigMaps with pre-configured Grafana dashboards
+> > - ✅ Prometheus server for metrics collection (if not using external)
+> > - ✅ Grafana server for visualization (if not using external)
+> > - ❌ **NO additional DCGM exporter** - must be deployed via NVIDIA GPU Operator
+> > - ❌ **NO additional monitoring agents** - uses existing Prometheus/Grafana or includes minimal Prometheus/Grafana
+> > - ❌ **NO automatic dashboard creation** - dashboards must be loaded into Grafana separately
+>
+> **Please review the prerequisites and ensure all requirements are met before proceeding.**
+
 A comprehensive Helm chart for monitoring GPU resources in Kubernetes clusters. This tool provides real-time visibility into GPU allocation, utilization, memory usage, and pod status through an integrated Prometheus and Grafana monitoring stack.
 
 ## Overview
